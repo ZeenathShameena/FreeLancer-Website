@@ -1,0 +1,67 @@
+POST http://localhost:4500/api/auth/RegisterForm
+Content-Type: application/json
+
+{
+  "name": "shamee",
+  "email": "zeenaathshameena@Gmail.com",
+  "password": "Abcd234l",
+  "userRole": "client"
+}
+####
+POST http://localhost:4500/api/auth/Login
+Content-Type: application/json
+
+{
+  "email": "zeeenathshameena@Gmail.com",
+  "password": "Abcd234l"
+}
+####
+
+POST http://localhost:4500/api/auth/submit
+Content-Type: application/json
+
+{
+  "title": "Frss",
+  "description": "asdfghjgdlxasx  niewinm jiwjijij iewjjewj...",
+  "requirements": "efiuefhiu",
+  "jobCategory": "full-time",
+  "salary": 20000,
+  "location": "Chennai",
+  "workType": "onsite",
+  "companyName": "ert2w",
+  "email": "zeenathshameena@gmail.com",
+  "jobFile": "1739263823267EmploymentCertificate.pdf",
+  "dateTime": "2024-02-12"
+}
+####
+
+GET http://localhost:4500/api/auth/Show_Works
+####
+
+
+PATCH  http://localhost:4500/api/auth/forgot-password
+Content-Type: application/json
+
+{
+  "email": "zeenatha@gmail.com"
+}
+####
+PATCH  http://localhost:4500/api/auth/verify-forgot-password-code
+Content-Type: application/json
+
+{
+  "email": "zeenathshameena@gmail.com",
+  "providedCode":310025,
+  "newPassword":"Abcd3341"
+}
+####
+get http://localhost:4500/api/auth/post
+Content-Type: application/json
+
+{
+  "jobTitle": "Frss",
+  "jobDescription": "asdfghjgdlxasiewjjewj...",
+  "jobBudget": 1
+}
+####
+get http://localhost:4500/api/auth/AddData

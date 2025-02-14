@@ -1,0 +1,17 @@
+/* Ensure the parent container is positioned relatively */
+.position-relative {
+  position: relative;
+}
+
+/* Style for the eye icon */
+.position-change,
+.password-toggle-icon {
+  position: absolute;
+  right: 15px; /* Adjust spacing from the right */
+  top: 70%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  cursor: pointer;
+  color: #6c757d; /* Optional: Bootstrap muted color */
+}
+

@@ -1,0 +1,14 @@
+/* nav bar.jsx */
+.navbar-toggler .navbar-toggler-icon:hover{
+    color: rgb(23, 23, 24);
+}
+/* .navbar-toggler:hover{
+    background-color: rgb(0, 114, 214);
+} */
+.login-btn{
+    width: 100px;
+}
+.register-btn{
+    width: 100px;
+    padding: 10px;
+}

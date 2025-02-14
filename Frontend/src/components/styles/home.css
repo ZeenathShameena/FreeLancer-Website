@@ -1,0 +1,87 @@
+
+.home-text-con{
+      /* position: relative;
+    bottom: 100px;
+    top: 20px; */
+    border-radius:100% 0% 100% 0% / 0% 0% 100% 100%  !important;
+}
+.home-img-con{
+      /* position: relative;
+    bottom: 100px;
+    top: 20px; */
+    border-radius:100% 0% 100% 0% / 100% 100% 0% 0%   !important;
+}
+
+.hireme-btn{
+    width: 150px;
+}
+.hireme-btn .freelancer-btn{
+  text-decoration: none;
+  color: aliceblue;
+
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+  .container {
+    flex-direction: column;
+    align-items: center;
+    padding-top: 3rem;
+  }
+   .home-img-con {
+     max-width: 300px;
+     border-radius: none;
+  }
+
+  .row {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .home-text-con {
+    width: 90%;
+    padding: 1.5rem;
+    border-radius: none;
+  }
+
+  .hireme-btn {
+    font-size: 1rem;
+    padding: 0.8rem 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .home-text-con {
+    font-size: 1rem;
+    padding: 1.2rem;
+  }
+
+  @media (max-width: 768px) {
+  .home-img-con {
+    display: none;
+  }
+}
+
+}
+
+@media (max-width: 576px) {
+  .container {
+    padding-top: 2rem;
+  }
+
+  .home-text-con {
+    width: 95%;
+    font-size: 0.9rem;
+    padding: 1rem;
+  }
+
+  .hireme-btn {
+    font-size: 0.9rem;
+    padding: 0.6rem 1.2rem;
+  }
+
+  .home-img-con {
+    max-height: 300px;
+  }
+}
