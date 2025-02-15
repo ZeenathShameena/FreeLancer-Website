@@ -8,6 +8,7 @@ import Home from "./components/Home";
 import Navbar from "./components/Nabar";
 import Hiring from "./components/Hiring";
 import Client from "./components/Client"; 
+import About from "./components/About";
 import ForgetPassword from "./components/ForgetPassword";
 import PasswordValidation from "./components/PasswordValidation";
 import FrelancerDashBorad from "./components/Freelancer/Freelancerdashborad";
@@ -24,6 +25,7 @@ function App() {
         {/* freelancer route */}
         <Route path="/hiring" element={<Hiring />}></Route>
         <Route path="/client" element={<Client />}></Route>
+        <Route path="/about" element={<About />} />
         <Route path="/freelancerdashboard" element={<FrelancerDashBorad />} />
         <Route path="/clientdashboard" element={<ClientDashboard />} />
         <Route path="/ForgetPassword" element={<ForgetPassword />} />

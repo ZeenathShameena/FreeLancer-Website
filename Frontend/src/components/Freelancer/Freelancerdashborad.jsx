@@ -4,45 +4,57 @@ import axios from "axios";
 
 
 const FreelancerDashboard = () => {
-  // Sample data for freelancer details
-  const freelancer = {
-    name: "vijay",
-    email: "vijay@example.com",
-    skills: ["React.js", "Node.js", "reactNative"],
-    experience: "2 Years",
+  // Freelancer details state
+  const [freelancer, setFreelancer] = useState({
+    name: "",
+    email: "",
+    skills: "",
+    experience: "",
     rating: 4.8,
-    totalEarnings: "$12,500",
-    profileImage: "./assets/pic04.jpg", // Placeholder image
+    totalEarnings: "",
+    profileImage: "",
+  });
+
+  // State for modal visibility
+  const [showModal, setShowModal] = useState(false);
+
+  // State for form inputs
+  const [formData, setFormData] = useState({ ...freelancer });
+
+  // Handle input change
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Sample data for current and completed jobs
-  // const [currentJobs] = useState([
-  //   { id: 1, title: "E-commerce Website", deadline: "10 Feb 2025" },
-  //   { id: 2, title: "Portfolio Website", deadline: "15 Feb 2025" },
-  // ]);
+  // Handle image upload
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setFormData({ ...formData, profileImage: imageUrl });
+    }
+  };
 
-  const [currentJobs, setCurrentJobs] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  const [completedJobs] = useState([
-    { id: 1, title: "Landing Page Design", earnings: "$300" },
-    { id: 2, title: "Blog Website", earnings: "$500" },
-  ]);
-
-  useEffect(() => {
-    axios
-      .get("http://localhost:4500/api/auth/AddData") // Call your backend API
-      .then((response) => {
-        if (response.data.success) {
-          setCurrentJobs(response.data.data); // Store jobs in state
-        }
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching jobs:", error);
-        setLoading(false);
-      });
-  }, []);
+  // Handle form submission
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setFreelancer({ ...formData }); // Update state
+    setShowModal(false); // Close modal
+  };
+  // useEffect(() => {
+  //   axios
+  //     .get("http://localhost:4500/api/auth/AddData") // Call your backend API
+  //     .then((response) => {
+  //       if (response.data.success) {
+  //         setCurrentJobs(response.data.data); // Store jobs in state
+  //       }
+  //       setLoading(false);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error fetching jobs:", error);
+  //       setLoading(false);
+  //     });
+  // }, []);
 
   return (
     <div className="container mt-5">
@@ -50,19 +62,40 @@ const FreelancerDashboard = () => {
         {/* Left Section: Profile Overview */}
         <div className="col-md-4">
           <div className="card p-3 shadow">
-            <div className="text-center">
+            <div className="text-center position-relative">
               <img
                 src={freelancer.profileImage}
                 alt="Profile"
                 className="rounded-circle mb-3"
                 width="100"
               />
+              {/* Image Upload Icon */}
+              {/* <label
+                htmlFor="imageUpload"
+                className="position-absolute bottom-0 start-50 translate-middle bg-primary text-white rounded-circle p-1"
+                style={{ cursor: "pointer" }}
+              >
+                📷
+              </label>
+              <input
+                type="file"
+                id="imageUpload"
+                accept="image/*"
+                className="d-none"
+                onChange={(e) => {
+                  handleImageUpload(e);
+                  setFreelancer({
+                    ...freelancer,
+                    profileImage: URL.createObjectURL(e.target.files[0]),
+                  });
+                }}
+              /> */}
               <h5>{freelancer.name}</h5>
               <p className="text-muted">{freelancer.email}</p>
             </div>
             <hr />
             <p>
-              <strong>Skills:</strong> {freelancer.skills.join(", ")}
+              <strong>Skills:</strong> {freelancer.skills}
             </p>
             <p>
               <strong>Experience:</strong> {freelancer.experience}
@@ -73,32 +106,142 @@ const FreelancerDashboard = () => {
             <p>
               <strong>Total Earnings:</strong> {freelancer.totalEarnings}
             </p>
+
+            {/* Button to Show Modal */}
+            <button
+              type="button"
+              className="btn btn-primary w-100 mt-3"
+              onClick={() => setShowModal(true)}
+            >
+              Edit Profile
+            </button>
           </div>
         </div>
+
+        {/* Modal for Editing Profile */}
+        {showModal && (
+          <div className="modal fade show d-block" tabIndex="-1">
+            <div className="modal-dialog">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title">Edit Profile</h5>
+                  <button
+                    type="button"
+                    className="btn-close"
+                    onClick={() => setShowModal(false)}
+                  ></button>
+                </div>
+                <div className="modal-body">
+                  <form onSubmit={handleSubmit}>
+                    {/* Image Upload in Modal */}
+                    <div className="mb-3 text-center">
+                      <img
+                        src={formData.profileImage}
+                        alt="Profile"
+                        className="rounded-circle mb-1"
+                        width="80"
+                      />
+                      <input
+                        type="file"
+                        id="modalImageUpload"
+                        accept="image/*"
+                        className="d-none"
+                        onChange={handleImageUpload}
+                      />
+                      <div className="position-relative ">
+                        <button
+                          type="button"
+                          className="btn btn-outline-primary mb-3 top-2"
+                          onClick={() =>
+                            document.getElementById("modalImageUpload").click()
+                          }
+                        >
+                          Upload Image
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="mb-3">
+                      <label className="form-label">Name</label>
+                      <input
+                        type="text"
+                        name="name"
+                        className="form-control"
+                        value={formData.name}
+                        onChange={handleChange}
+                      />
+                    </div>
+                    <div className="mb-3">
+                      <label className="form-label">Email</label>
+                      <input
+                        type="email"
+                        name="email"
+                        className="form-control"
+                        value={formData.email}
+                        onChange={handleChange}
+                      />
+                    </div>
+                    <div className="mb-3">
+                      <label className="form-label">Skills</label>
+                      <input
+                        type="text"
+                        name="skills"
+                        className="form-control"
+                        value={formData.skills}
+                        onChange={handleChange}
+                      />
+                    </div>
+                    <div className="mb-3">
+                      <label className="form-label">Experience</label>
+                      <input
+                        type="text"
+                        name="experience"
+                        className="form-control"
+                        value={formData.experience}
+                        onChange={handleChange}
+                      />
+                    </div>
+                    <div className="mb-3">
+                      <label className="form-label">Total Earnings</label>
+                      <input
+                        type="text"
+                        name="totalEarnings"
+                        className="form-control"
+                        value={formData.totalEarnings}
+                        onChange={handleChange}
+                      />
+                    </div>
+                    <button type="submit" className="btn btn-success w-100">
+                      Save Changes
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Right Section: Jobs and Notifications */}
         <div className="col-md-8">
           <div className="card p-3 shadow mb-4">
             <h5>Current Jobs</h5>
             <ul className="list-group">
-              {currentJobs.map((job) => (
-                <li key={job.id} className="list-group-item">
-                  {job.title}{" "}
-                  <span className="text-muted">(Deadline: {job.deadline})</span>
-                </li>
-              ))}
+              <li className="list-group-item">
+                E-commerce Website (Deadline: 10 Feb 2025)
+              </li>
+              <li className="list-group-item">
+                Portfolio Website (Deadline: 15 Feb 2025)
+              </li>
             </ul>
           </div>
 
           <div className="card p-3 shadow mb-4">
             <h5>Completed Jobs</h5>
             <ul className="list-group">
-              {completedJobs.map((job) => (
-                <li key={job.id} className="list-group-item">
-                  {job.title}{" "}
-                  <span className="text-success">(Earned: {job.earnings})</span>
-                </li>
-              ))}
+              <li className="list-group-item">
+                Landing Page Design (Earned: $300)
+              </li>
+              <li className="list-group-item">Blog Website (Earned: $500)</li>
             </ul>
           </div>
 
@@ -117,5 +260,4 @@ const FreelancerDashboard = () => {
     </div>
   );
 };
-
 export default FreelancerDashboard;
