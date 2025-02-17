@@ -12,45 +12,25 @@ const userSchema = mongoose.Schema(
         required: [true, "Project description is required!"],
         minLength: [10, "Project description must be contain atleast 10 words"]
     },
-    requirements: {
-        type: String,  
-        required: [true, "At least one requirement is needed!"]
-    },
-    jobCategory: {
-        type: String,
-        enum: ["full-time", "part-time", "internship", "contract"], // Restrict values
-        required: true
-    },
     salary: {
         type: Number,  
         required: [true, "Salary Range needed!"]
     },
-    location: {
-        type: String,  
-        required: [true, "JobLocation needed!"]
-    },
     workType: { 
         type: String,
-        enum: ["remote", "onsite", "hybrid"], 
+        enum: ["Remote", "Onsite", "Hybrid"],
         required: [true, "Work Type needed!"]
-    },
-    companyName: {
-        type: String,  
-        required: [true, "Company Name needed!"]
-    },    
-    email: {
-        type: String,
-        required: [true, 'Contact Email is required!'],
-        trim: true,
-        minLength: [5, 'Email must have 5 characters!'],
-        lowercase: true,
-    },
-    jobFile: {
-        type: String
     },
     dateTime: {
         type: Date
+    },
+    status: { 
+        type: String,
+        default: "Open"
+    },
+    email: {
+        type: String
     }
 });
 
-module.exports = mongoose.model('Project', userSchema);
+module.exports = mongoose.model('Project2', userSchema);

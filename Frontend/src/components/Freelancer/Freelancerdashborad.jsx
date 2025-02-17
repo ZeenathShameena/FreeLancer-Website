@@ -21,6 +21,23 @@ const FreelancerDashboard = () => {
   // State for form inputs
   const [formData, setFormData] = useState({ ...freelancer });
 
+  // Fetch profile data from backend
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await axios.get("http://localhost:4500/api/auth/profile", { withCredentials: true })
+        setFreelancer(response.data);
+        setFormData(response.data);
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+      }
+    };
+
+
+    fetchProfile();
+  }, []);
+
+  
   // Handle input change
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -36,25 +53,16 @@ const FreelancerDashboard = () => {
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
-    setFreelancer({ ...formData }); // Update state
-    setShowModal(false); // Close modal
+    try {
+      await axios.patch("http://localhost:4500/api/auth/UpdateProfile", formData);
+      setFreelancer({ ...formData }); // Update state with the form data
+      setShowModal(false); // Close modal
+    } catch (error) {
+      console.error("Error updating profile:", error);
+    }
   };
-  // useEffect(() => {
-  //   axios
-  //     .get("http://localhost:4500/api/auth/AddData") // Call your backend API
-  //     .then((response) => {
-  //       if (response.data.success) {
-  //         setCurrentJobs(response.data.data); // Store jobs in state
-  //       }
-  //       setLoading(false);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error fetching jobs:", error);
-  //       setLoading(false);
-  //     });
-  // }, []);
 
   return (
     <div className="container mt-5">

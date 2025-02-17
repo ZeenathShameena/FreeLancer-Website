@@ -3,6 +3,9 @@ import { PencilSquare } from "react-bootstrap-icons";
 import Hiring from "./../Hiring"; // Import Hiring Component
 import "../Clientdash/clientdashboard.css";
 import axios from "axios";
+import { useNavigate, useLocation } from "react-router-dom"; 
+
+
 
 const ClientDashboard = () => {
   // Client details
@@ -46,28 +49,44 @@ const ClientDashboard = () => {
   const hiringModalRef = useRef(null);
   const editModalRef = useRef(null);
   const [editFormData, setEditFormData] = useState(client);
+  
+  const location=useLocation()
 
-  // Initialize Bootstrap Modals
   useEffect(() => {
+
+    // Initialize Bootstrap Modals
     import("bootstrap/dist/js/bootstrap.bundle.min").then((bootstrap) => {
-      new bootstrap.Modal(hiringModalRef.current);
-      new bootstrap.Modal(editModalRef.current);
+           new bootstrap.Modal(hiringModalRef.current);
+           new bootstrap.Modal(editModalRef.current);
     });
+
+    //Getting Current_Jobs from DB
+    axios
+      .get("http://localhost:4500/api/auth/Show_Works", { withCredentials: true })
+      .then((response) => {
+        if (response.data.success) {
+          setJobs(response.data.data); // Set jobs from API response
+        }
+      })
+      .catch((error) => console.error("Error fetching jobs:", error));
+
+    // Getting Client Details from DB
+    axios
+    .get("http://localhost:4500/api/auth/profile", { withCredentials: true })
+    .then((response) => {
+      if (response.data.success) {
+        setClient(response.data.client); // Set client details from API response
+        setEditFormData(response.data.client); // Pre-fill edit form
+      }
+    })
+    .catch((error) => console.error("Error fetching client details:", error));
+
   }, []);
 
-  // Handle Profile Edit Input Change
-  const handleEditChange = (e) => {
-    setEditFormData({ ...editFormData, [e.target.name]: e.target.value });
-  };
 
-  // Save Edited Profile Data
-  const handleSaveProfile = (e) => {
-    e.preventDefault();
-    setClient(editFormData);
-    document.getElementById("editProfileModalClose").click(); // Close Modal
-  };
 
-    const fileInputRef = useRef(null);
+
+  const fileInputRef = useRef(null);
 
   // Function to handle image upload
   const handleImageUpload = (event) => {
@@ -81,25 +100,42 @@ const ClientDashboard = () => {
     }
   };
 
-  // try {
-  //   console.log(jobTitle, jobDescription, jobBudget);
-  //   axios
-  //     .post("http://localhost:4500/api/auth/post", newJob)
-  //     .then((res) => {
-  //       if (res.data.success) {
-  //         alert("Your Post Submitted Succesfully!");
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       if (error.response && error.response.status === 500) {
-  //         alert(error.response.data.message);
-  //       } else {
-  //         alert("An error occurred. Please try again.");
-  //       }
-  //     });
-  // } catch (e) {
-  //   console.log(e);
-  // }
+
+  // Handle Profile Edit Input Change
+  const handleEditChange = (e) => {
+    setEditFormData({ ...editFormData, [e.target.name]: e.target.value });
+  };
+
+  // Save Edited Profile Data
+  const handleSaveProfile = (e) => {
+    e.preventDefault();
+    
+
+    //To Update Profile
+    axios
+    .patch("http://localhost:4500/api/auth/UpdateProfile", editFormData, 
+       {  headers: { "Content-Type": "multipart/form-data" },
+          withCredentials: true
+       })
+    .then((response) => {
+      if (response.data.success) {
+        console.log("Profile updated:", response.data);
+        setClient(editFormData); // Update client state with edited data
+        document.getElementById("editProfileModalClose").click(); // Close Modal
+      } else {
+        console.error("Failed to update client details");
+      }
+    })
+    .catch((error) => console.error("Error updating client details:", error));
+
+
+
+
+    setClient(editFormData);
+    document.getElementById("editProfileModalClose").click(); // Close Modal
+  };
+
+
 
   return (
     <div className="container mt-5">
@@ -187,12 +223,13 @@ const ClientDashboard = () => {
                 <li key={job.id} className="list-group-item">
                   <strong>{job.title}</strong> <br />
                   <small className="text-muted">{job.description}</small> <br />
-                  <span className="text-muted">Budget: {job.budget}</span> |
-                  <span className="text-primary">
+                  <span className="text-muted">Budget: {job.salary}</span> |
+                  {/* <span className="text-primary">
                     {" "}
-                    {job.workType} - {job.jobType}
-                  </span>{" "}
-                  |<span className="text-success"> Posted on: {job.date}</span>
+                    {job.workType} - {job.workType}
+                  </span>{" "} */}
+                  <span className="text-muted">Work Type: {job.workType}</span> |
+                  |<span className="text-success"> Posted on: {job.dateTime}</span>
                   <br />
                   <span className="btn btn-secondary text-center">
                     {job.status}
@@ -216,6 +253,8 @@ const ClientDashboard = () => {
           </div>
         </div>
       </div>
+
+
 
       {/* Edit Profile Modal */}
       <div

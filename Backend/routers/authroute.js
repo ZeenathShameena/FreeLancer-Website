@@ -1,27 +1,19 @@
 const express = require('express');
 const router = express.Router();
+
+
+
 const authController = require('../controllers/authcontroller');
 
 const PostController = require('../controllers/postcontroller');
 const { identifier } = require('../middlewares/identification');
 
+const upload= require('../middlewares/upload')
 
-
-const path = require('path');
+//const path = require('path');
 
 const app = express();
-const multer = require('multer');
 
-const storage = multer.diskStorage({
-	destination: function (req, file, cb){
-		cb(null, path.join(__dirname, '../files'));
-	},
-	filename: function (req, file, cb) {
-		const uniqueSuffix = Date.now();
-		cb(null, uniqueSuffix + file.originalname);
-	},
-});
-const upload = multer({ storage: storage });
 
 
 
@@ -32,12 +24,18 @@ router.patch('/forgot-password',authController.sendForgotPasswordCode);
 router.patch('/verify-forgot-password-code',authController.verifyForgotPasswordCode);
 
 
-router.post('/submit',upload.single("jobFile"), authController.submit);
-router.post('/post', PostController.post);
-router.get('/AddData', PostController.AddData);
+//Show  Profile
+router.get('/profile',identifier, PostController.profile);
+//Hiring
+router.post('/submit',identifier, PostController.submit);
+//Current Jobs
+router.get('/Show_Works',identifier, PostController.Show_Works);
+//For  Profile Update
+router.patch('/UpdateProfile',upload.single("profileImage"),identifier, PostController.UpdateProfile);
 
 
-router.get('/Show_Works', authController.Show_Works);
+//Notification
+router.get('/Available_Jobs', PostController.Available_Jobs);
 
 
 module.exports = router;

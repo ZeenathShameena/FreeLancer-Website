@@ -22,13 +22,18 @@ const Login = () => {
     e.preventDefault();
 
     try {
-        await axios.post("http://localhost:4500/api/auth/Login", formData)
+        await axios.post("http://localhost:4500/api/auth/Login", formData, {withCredentials:true})
         .then(res => {
             if (res.data.success) {
+              //localStorage.setItem("userId", res.data.user._id);
+              console.log("seccess")
+              localStorage.setItem("token", res.data.token);// Token is available in the `data` field
+              console.log("Token in Local Storage:", localStorage.getItem("token"));
+
               if(res.data.message === 'Freelancer'){
-                  navigate("/freelancerdashboard" );
+                  navigate("/freelancerdashboard", {state: {id:localStorage.getItem("token")}} );
               }else{
-                navigate("/clientdashboard");
+                navigate("/clientdashboard", {state: {id:localStorage.getItem("token")}});
               }
             }
         })

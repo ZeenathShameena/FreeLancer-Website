@@ -1,5 +1,8 @@
 import { useState } from "react";
 import "././styles/hiring.css"; // Import the CSS file
+import axios from "axios";
+
+
 
 const HiringForm = () => {
   const [formData, setFormData] = useState({
@@ -14,16 +17,35 @@ const HiringForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert("Job posted successfully!");
 
-    // Reset form fields after submission
-    setFormData({
-      title: "",
-      description: "",
-      salary: "",
-      workType: "",
-      dateTime: "",
-    });
+    try {
+       axios.post("http://localhost:4500/api/auth/submit", formData, { withCredentials: true })
+      .then(res => {
+        if (res.data.success){
+          alert("Your Post Submitted Succesfully!");
+          // Reset form fields after submission
+          setFormData({
+            title: "",
+            description: "",
+            salary: "",
+            workType: "",
+            dateTime: "",
+          });
+        }
+      })
+      .catch(error => {
+        if (error.response && error.response.status === 500) {
+          alert(error.response.data.message); 
+        } else {
+          alert("An error occurred. Please try again.");
+        }
+        console.log(error);
+      });
+  } catch (e) {
+      console.log(e);
+  }
+
+    
   };
 
   return (
@@ -69,22 +91,22 @@ const HiringForm = () => {
 
       <div className="mb-3 fade-in">
         <label>Work Type</label>
-        {["Remote", "Onsite", "Hybrid"].map((type) => (
-          <div key={type} className="form-check">
+        {["Remote", "Onsite", "Hybrid"].map((role) => (
+          <div key={role} className="form-check">
             <input
               type="radio"
-              id={type}
+              id={role}
               className="form-check-input"
               name="workType"
-              value={type}
-              checked={formData.workType === type}
+              value={role}
+              checked={formData.workType === role}
               onChange={(e) =>
                 setFormData({ ...formData, workType: e.target.value })
               }
               required
             />
-            <label htmlFor={type} className="form-check-label">
-              {type}
+            <label htmlFor={role} className="form-check-label">
+              {role}
             </label>
           </div>
         ))}

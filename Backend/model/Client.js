@@ -23,19 +23,24 @@ const userSchema = mongoose.Schema(
         userRole:{
             type: String
         },
-        verified: {
-			type: Boolean,
-			default: false,
-		},
+        company:{
+            type: String,
+            default: ''
+        },
+        profileImage:{
+            type: String,
+            deafault: "https://robohash.org/default-profile.png"
+        },
         forgotPasswordCode: {
-			type: String,
-			select: false,
-		},
-		forgotPasswordCodeValidation: {
-			type: Number,
-			select: false,
-		}
+            type: String,
+            select: false,
+        },
+        forgotPasswordCodeValidation: {
+            type: Number,
+            select: false,
+        }
 
 });
 
-module.exports = mongoose.model('login', userSchema);
+module.exports = mongoose.model('Client', userSchema);
+

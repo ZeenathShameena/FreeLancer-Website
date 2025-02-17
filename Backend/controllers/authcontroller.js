@@ -1,6 +1,16 @@
 const jwt = require('jsonwebtoken');
-const User = require('../model/loginmodel');
-const User2 = require('../model/usermodel');
+const User = require('../model/Freelancer');
+const Client = require('../model/Client');
+
+
+const express=require('express')
+const app=express()
+const cors = require('cors');
+app.use(cors({ 
+	origin: "http://localhost:3000", 
+	credentials: true }));
+
+
 
 const {
 	signupSchema,
@@ -31,12 +41,24 @@ exports.register = async (req, res) => {
 		}
 
 		const hashedPassword = await doHash(password, 12);
-		const newUser = new User({
-			name,
-			email,
-			password: hashedPassword,
-			userRole,
-		});
+		let newUser
+		if(userRole == 'Freelancer'){
+			 newUser = new User({
+				name,
+				email,
+				password: hashedPassword,
+				userRole,
+			});	
+		}else{
+			 newUser = new Client({
+				name,
+				email,
+				password: hashedPassword,
+				userRole,
+			});
+	
+		}
+
 		const result = await newUser.save();
 		result.password = undefined;
 		console.log("account has been created")
@@ -54,11 +76,15 @@ exports.register = async (req, res) => {
 exports.signin = async (req, res) => {
 	const { email, password } = req.body;
 	try {
-		const existingUser = await User.findOne({ email }).select('+password +userRole');
+		let existingUser
+		existingUser = await User.findOne({ email }).select('+password +userRole');
 		if (!existingUser) {
-			return res
-				.status(401)
-				.json({ success: false, message: 'User does not exists Please SignUp first!' });
+			existingUser = await Client.findOne({ email }).select('+password +userRole');
+			if(!existingUser){
+				return res
+					.status(401)
+					.json({ success: false, message: 'User does not exists Please SignUp first!' });
+			}
 		}
 		const result = await doHashValidation(password, existingUser.password);
 		if (!result) {
@@ -87,6 +113,7 @@ exports.signin = async (req, res) => {
 			.json({
 				success: true,
 				message: existingUser.userRole === 'Freelancer' ? 'Freelancer' : 'Client',
+				token,
 			});
 	} catch (error) {
 		console.log(error);
@@ -196,39 +223,3 @@ exports.verifyForgotPasswordCode = async (req, res) => {
 };
 
 
-exports.submit = async (req, res) => {
-    try {
-        const data = req.body;
-        if (req.file) {
-            data.jobFile = req.file.filename;
-        } else {
-            return res.status(500).json({
-                success: false,
-                message: "No file uploaded. Please select a file."
-            });
-        }
-		const newUser = new User2(data);
-
-        const result = await newUser.save();
-        res.status(200).json({
-            success: true,
-            message: 'Your data has been added',
-            result
-        });
-
-        }catch (err) {
-            console.error("Error saving user:", err);
-            res.status(500).json({ 
-				success: false,
-				message: err.message 
-				 });
-        }
-};
-exports.Show_Works = async (req, res) => {
-    try {
-        const works = await User2.find(); 
-        res.json(works);
-    } catch (err) {
-        res.status(500).json({ error: 'Database query failed' });
-    }
-}

@@ -12,8 +12,8 @@ POST http://localhost:4500/api/auth/Login
 Content-Type: application/json
 
 {
-  "email": "zeeenathshameena@Gmail.com",
-  "password": "Abcd234l"
+  "email": "shamee@Gmail.com",
+  "password": "shamee"
 }
 ####
 
@@ -64,4 +64,19 @@ Content-Type: application/json
   "jobBudget": 1
 }
 ####
-get http://localhost:4500/api/auth/AddData
+get http://localhost:4500/api/auth/Available_Jobs
+
+
+####
+Post http://localhost:4500/api/auth/profile
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2N2IxYjRhNjVlN2IwNDBlMGE1MDFhNDciLCJlbWFpbCI6InNoYW1lZUBnbWFpbC5jb20iLCJ1c2VyUm9sZSI6IkNsaWVudCIsImlhdCI6MTczOTcwMDc1MCwiZXhwIjoxNzM5NzI5NTUwfQ.M1loTenZxErZDK40oRIkuVOvDLweBasa5dDUyE6U3C8
+
+{
+  "name": "shamee",
+  "email": "shameena@gmail.com.com",
+  "company": "Tech Corp",
+  "profileImage": "https://example.com/profile.jpg"
+}
+####
+get http://localhost:4500/api/auth/profile
