@@ -26,7 +26,7 @@ const userSchema = mongoose.Schema(
         skills:{
             type: [String]
         },
-        expirience:{
+        experience:{
             type: Number
         },
         earnings:{
@@ -41,8 +41,7 @@ const userSchema = mongoose.Schema(
 			select: false,
 		},
         profileImage:{
-            type: String,
-            default: "https://robohash.org/default-profile.png"
+            type: String
         }
 
 });

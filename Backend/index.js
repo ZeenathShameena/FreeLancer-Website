@@ -10,7 +10,8 @@ const app = express();
 
 app.use(cookieParser());
 
-app.use("/files", express.static("files"));
+
+app.use("/files", express.static(path.join(__dirname, "./files"))); // Serve uploaded files statically
 
 app.use(express.json()); 
 app.use(express.urlencoded({ extended: true }));

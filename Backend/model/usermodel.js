@@ -30,7 +30,16 @@ const userSchema = mongoose.Schema(
     },
     email: {
         type: String
-    }
+    },
+    appliedBy: [
+        {
+            _id: { type: mongoose.Schema.Types.ObjectId, ref: "Freelancer" }, // Reference Freelancer model
+            name: { type: String }, // Store freelancer name
+            appliedAt: { type: Date, default: Date.now },
+            assigned: { type: String, default: "No"}
+        
+        }
+    ]
 });
 
-module.exports = mongoose.model('Project2', userSchema);
+module.exports = mongoose.model('Project', userSchema);

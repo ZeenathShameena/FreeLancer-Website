@@ -26,12 +26,12 @@ const Home = () => {
               </p>
               <div className="p-3 m-3">
                 <button className="btn btn-success p-3 m-3 hireme-btn">
-                  <Link to="/hiring" className="freelancer-btn">
+                  <Link to="/login" className="freelancer-btn">
                     Freelancer
                   </Link>
                 </button>
                 <button className="btn btn-primary p-3 m-3 hireme-btn">
-                  <Link to="/client" className="freelancer-btn">
+                  <Link to="/login" className="freelancer-btn">
                     Client
                   </Link>
                 </button>

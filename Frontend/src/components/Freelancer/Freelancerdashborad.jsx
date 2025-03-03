@@ -6,12 +6,12 @@ import axios from "axios";
 const FreelancerDashboard = () => {
   // Freelancer details state
   const [freelancer, setFreelancer] = useState({
-    name: "",
+    name: "shaa",
     email: "",
     skills: "",
     experience: "",
     rating: 4.8,
-    totalEarnings: "",
+    totalEarnings: 24,
     profileImage: "",
   });
 
@@ -20,21 +20,96 @@ const FreelancerDashboard = () => {
 
   // State for form inputs
   const [formData, setFormData] = useState({ ...freelancer });
+  const [notifications, setNotifications] = useState([]);
+
+  const [completedJobs, setcompletedJobs] = useState([]);
+  const [currentJobs, setcurrentJobs] = useState([]);
+  const [AppliedJobs, setAppliedJobs] = useState([]);
+
 
   // Fetch profile data from backend
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const response = await axios.get("http://localhost:4500/api/auth/profile", { withCredentials: true })
-        setFreelancer(response.data);
-        setFormData(response.data);
-      } catch (error) {
-        console.error("Error fetching profile:", error);
+
+    // Getting Freelancer Details from DB
+    axios
+    .get("http://localhost:4500/api/auth/Fprofile", { 
+        headers: { "Content-Type": "multipart/form-data" },
+        withCredentials: true
+      }) 
+    .then((response) => {
+      console.log("Profile Details:", response.data);
+      if (response.data.success ) {  //&& response.data.data.length > 0
+        setFreelancer((prev) => ({ ...prev, ...response.data.data[0] })); // Ensures all fields are updated
+        setFormData((prev) => ({ ...prev, ...response.data.data[0] }));
       }
-    };
+    })
+    .catch((error) => console.error("Error fetching Profile details:", error));
+
+    //Getting Current Jobs from DB
+    axios
+    .get("http://localhost:4500/api/auth/currentJobs", { withCredentials: true })
+    .then((response) => {
+      console.log("Current jobs fetched:", response.data);
+      if (response.data.success) {
+        setcurrentJobs(response.data.data); 
+      }
+    })
+    .catch((error) => console.error("Error fetching Current jobs:", error));
+    
+    //Getting Completed Jobs from DB
+    axios
+    .get("http://localhost:4500/api/auth/Fcompleted", { withCredentials: true })
+    .then((response) => {
+      console.log("Completed jobs Fetched:", response.data);
+      if (response.data.success) {
+        setcompletedJobs(response.data.data); 
+        // Calculate total salary spent
+        const totalSalarySpent = response.data.data.reduce((acc, job) => acc + job.salary, 0);
+
+        // Update client state with totalSpent
+        setFreelancer((prevUser) => ({
+          ...prevUser,
+          totalEarnings: totalSalarySpent,
+        }));
+        
+      }
+    })
+    .catch((error) => console.error("Error fetching Completed jobs:", error));
 
 
-    fetchProfile();
+    //Getting Applied Jobs from DB
+    axios
+    .get("http://localhost:4500/api/auth/Applied_Jobs", { withCredentials: true })
+    .then((response) => {
+      console.log("Applied jobs Fetched:", response.data);
+      if (response.data.success) {
+        setAppliedJobs(response.data.data); // Set jobs from API response
+      }
+    })
+    .catch((error) => console.error("Error fetching Applied jobs:", error));
+    
+    
+    
+    //Notifications
+    axios
+    .get("http://localhost:4500/api/auth/Available_Jobs", {
+      headers: { "Content-Type": "application/json" },
+      withCredentials: true,
+    })
+    .then((response) => {
+      console.log("Notifications Response:", response.data);
+      if (response.data && response.data.success && Array.isArray(response.data.data)) {
+        setNotifications(response.data.data); // Ensure it's an array before setting state
+      } else {
+        setNotifications([]); // Fallback to an empty array if data is missing or not an array
+      }
+    })
+    .catch((error) => {
+      console.error("Error fetching notifications:", error);
+      setNotifications([]); // Ensure notifications state doesn't remain undefined on error
+    });
+
+   
   }, []);
 
   
@@ -52,17 +127,62 @@ const FreelancerDashboard = () => {
     }
   };
 
+
   // Handle form submission
   const handleSubmit = async(e) => {
     e.preventDefault();
-    try {
-      await axios.patch("http://localhost:4500/api/auth/UpdateProfile", formData);
-      setFreelancer({ ...formData }); // Update state with the form data
-      setShowModal(false); // Close modal
-    } catch (error) {
-      console.error("Error updating profile:", error);
-    }
+
+    //To Update Profile
+    axios
+    .patch("http://localhost:4500/api/auth/UpdateProfile", formData, 
+        {  headers: { "Content-Type": "multipart/form-data" },
+          withCredentials: true
+        })
+    .then((response) => {
+      console.log("Updated Profile:", response.data);
+      if (response.data.success) {
+        setFreelancer({...formData}); // Update client state with edited data
+        setShowModal(false); // Close modal
+        alert(response.data.message)
+      } 
+    })
+    .catch((error) => {
+      if(error.response)
+      {
+        alert(error.response.data.message);
+      }
+      console.error("Error updating Freelancer details:", error)
+    });
+    
   };
+  
+const [appliedJobs, setappliedJobs] = useState([]);
+useEffect(() => {
+  // Load applied jobs from localStorage
+  const storedAppliedJobs = JSON.parse(localStorage.getItem("appliedJobs")) || [];
+  setappliedJobs(storedAppliedJobs);
+}, []);
+
+const handleApply = async (jobId) => {
+  try {
+    const response = await axios.post(
+      "http://localhost:4500/api/auth/applyJob", {jobId},
+      { withCredentials: true }
+    );
+
+    if (response.data.success) {
+      alert("Applied successfully!");
+      //const updatedAppliedJobs = [...appliedJobs, jobId]; //LocalStorage
+      setappliedJobs([...appliedJobs, jobId]);
+      //localStorage.setItem("appliedJobs", JSON.stringify(updatedAppliedJobs));
+    } else {
+      alert(response.data.message);
+    }
+  } catch (error) {
+    console.error("Error applying for job:", error);
+    alert(error.response.data.message);
+  }
+};
 
   return (
     <div className="container mt-5">
@@ -112,7 +232,7 @@ const FreelancerDashboard = () => {
               <strong>Rating:</strong> ⭐ {freelancer.rating} / 5
             </p>
             <p>
-              <strong>Total Earnings:</strong> {freelancer.totalEarnings}
+              <strong>Total Earnings:</strong> ${freelancer.totalEarnings}
             </p>
 
             {/* Button to Show Modal */}
@@ -231,7 +351,7 @@ const FreelancerDashboard = () => {
 
         {/* Right Section: Jobs and Notifications */}
         <div className="col-md-8">
-          <div className="card p-3 shadow mb-4">
+          {/* <div className="card p-3 shadow mb-4">
             <h5>Current Jobs</h5>
             <ul className="list-group">
               <li className="list-group-item">
@@ -241,28 +361,81 @@ const FreelancerDashboard = () => {
                 Portfolio Website (Deadline: 15 Feb 2025)
               </li>
             </ul>
+          </div> */}
+
+          {/* Current Jobs */}
+          <div className="card p-3 shadow mb-4">
+            <h5>Current Jobs</h5>
+            <ul className="list-group">
+              {currentJobs.map((job) => (
+                <li key={job.id} className="list-group-item">
+                  {job.title}{" "}
+                </li>
+              ))}
+            </ul>
           </div>
 
+          {/* Completed Jobs */}
           <div className="card p-3 shadow mb-4">
             <h5>Completed Jobs</h5>
             <ul className="list-group">
-              <li className="list-group-item">
-                Landing Page Design (Earned: $300)
-              </li>
-              <li className="list-group-item">Blog Website (Earned: $500)</li>
+              {completedJobs.map((job) => (
+                <li key={job.id} className="list-group-item">
+                  {job.title}{" "}
+                  <span className="text-success">(Spent: ${job.salary})</span>
+                </li>
+              ))}
             </ul>
           </div>
 
           <div className="card p-3 shadow">
             <h5>Notifications</h5>
             <ul className="list-group">
-              <li className="list-group-item">New job invitation received</li>
-              <li className="list-group-item">
-                Payment for "Blog Website" received
-              </li>
-              <li className="list-group-item">Client left a 5-star review</li>
+                {notifications.length > 0 ? (
+                    notifications.map((notification, index) => (
+                     <li key={index} className="list-group-item">
+                      <strong>{notification.title}</strong> <br />
+                      <small>{new Date(notification.dateTime).toLocaleString()}</small> {/* Format date */}
+                      <br />
+
+                      {/* Apply Button */}
+                      <button 
+                      className="btn btn-primary mt-2"
+                      onClick={() => handleApply(notification._id)}
+                      disabled={appliedJobs.includes(notification._id)} // Disable if already applied
+                      >
+                         {appliedJobs.includes(notification._id) ? "Applied" : "Apply"}
+                      </button>
+                    </li>
+                  ))
+               ) : (
+                <li className="list-group-item text-muted">No new notifications</li>
+               )}
             </ul>
           </div>
+
+          <div className="card p-3 shadow">
+            <h5>Jobs Applied</h5>
+            <ul className="list-group">
+                {AppliedJobs.length > 0 ? (
+                    AppliedJobs.map((Job) => (
+                     <li key={Job.id} className="list-group-item">
+                      <strong>{Job.title}</strong> <br />
+
+                      {/* Apply Button */}
+                      <button 
+                      className="btn btn-primary mt-2"
+                      >
+                       Applied
+                      </button>
+                    </li>
+                  ))
+               ) : (
+                <li className="list-group-item text-muted">No Jobs Applied</li>
+               )}
+            </ul>
+          </div>
+
         </div>
       </div>
     </div>

@@ -34,11 +34,12 @@ const RegisterForm = () => {
         .then(res => {
           if (res.data.success) {
             alert("Registered successfully!");
-            if (formData.userRole === "Freelancer") {
-              navigate("/freelancerdashboard");
-            } else {
-              navigate("/clientdashboard");
-            }
+            navigate("/login")
+            // if (formData.userRole === "Freelancer") {
+            //   navigate("/freelancerdashboard");
+            // } else {
+            //   navigate("/clientdashboard");
+            // }
           }
         })
         .catch(error => {

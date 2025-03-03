@@ -8,12 +8,6 @@ exports.identifier = (req, res, next) => {
 		token = req.cookies['Authorization'];
 	}
 
-
-	console.log("Request Headers:", req.headers);
-    console.log("Request Cookies:", req.cookies);
-    console.log("Recevied File:", req.file);
-
-
 	if (!token) {
 		return res.status(403).json({ success: false, message: 'No Token -Unauthorized' });
 	}
@@ -23,7 +17,7 @@ exports.identifier = (req, res, next) => {
 		const jwtVerified = jwt.verify(userToken, process.env.TOKEN_SECRET);
 		if (jwtVerified) {
 			req.user = jwtVerified;
-			console.log(jwtVerified)
+			console.log("Token data",jwtVerified)
 			next();
 		} else {
 			throw new Error('error in the token');

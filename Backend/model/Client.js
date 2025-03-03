@@ -28,8 +28,7 @@ const userSchema = mongoose.Schema(
             default: ''
         },
         profileImage:{
-            type: String,
-            deafault: "https://robohash.org/default-profile.png"
+            type: String
         },
         forgotPasswordCode: {
             type: String,
