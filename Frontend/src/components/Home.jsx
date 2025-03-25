@@ -18,6 +18,7 @@ const Home = () => {
           <div className="row">
             {/* Text Content */}
             <div className="col-md-6 col-10 bg-dark bg-opacity-50 p-4 rounded home-text-con">
+              
               <p className="fs-5">
                 Lorem ipsum dolor sit amet consectetur, adipisicing elit. Autem
                 harum doloribus, minima sequi porro totam reprehenderit nostrum
@@ -41,7 +42,7 @@ const Home = () => {
             {/* Right Side Image */}
             <div className="col-md-6 col-10 mt-3 mt-md-0 d-flex justify-content-center ">
               <img
-                src="./assets/pic04.jpg"
+                src="./assets/home.jpg"
                 alt="Right Side"
                 className="img-fluid rounded home-img-con"
                 style={{ maxHeight: "500px", objectFit: "cover" }}

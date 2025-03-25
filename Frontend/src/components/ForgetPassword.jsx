@@ -48,7 +48,7 @@ const ForgetPassword = () => {
                 <div className="row g-0">
                   <div className="col-md-6 col-lg-5 d-none d-md-block d-flex align-items-center text-center mb-5">
                     <img
-                      src="/assets/pic04.jpg"
+                      src="/assets/fgp.jpg"
                       alt="login form"
                       className="img-fluid h-100"
                       style={{ borderRadius: "1rem 0 0 1rem" }}

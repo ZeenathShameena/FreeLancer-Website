@@ -28,10 +28,7 @@
     align-items: center;
     padding-top: 3rem;
   }
-   .home-img-con {
-     max-width: 300px;
-     border-radius: none;
-  }
+ 
 
   .row {
     flex-direction: column;
@@ -59,7 +56,10 @@
 
   @media (max-width: 768px) {
   .home-img-con {
-    display: none;
+    /* display: none; */
+ 
+    width: 100%;
+   
   }
 }
 
